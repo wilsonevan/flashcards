@@ -1,6 +1,7 @@
 import React from "react";
 import {Form, } from "semantic-ui-react";
 
+// The purpose of this class is to render the form for either adding a new flashcard, or editing an existing one.
 class FlashcardForm extends React.Component {
   state = { title: "", description: "", };
 
@@ -16,7 +17,6 @@ class FlashcardForm extends React.Component {
     }
     else if (this.props.editFlashcard) {
       this.props.editFlashcard(this.props.id, this.state);
-      
     }
   }
   

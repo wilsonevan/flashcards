@@ -13,13 +13,16 @@ class App extends Component {
     showForm: false,
   };
 
+  // Generates a relatively random ID with low probability of duplicates for small database
   getId = () => Math.floor( (1 + Math.random()) * 100000 );
 
+  // Lets the user add a new flashcard to their array
   addFlashcard = (flashcardData) => {
     let flashcard = { id: this.getId(), ...flashcardData, }
     this.setState( { flashcards: [...this.state.flashcards, flashcard ] } )
   }
 
+  // Allows a user to edit an existing flashcard's title or description
   editFlashcard = (id, newData) => {
     // Concatinate new data with existing id
     let updatedFlashcard = {id, ...newData, showDescription: true, }
@@ -33,13 +36,22 @@ class App extends Component {
     this.setState({ flashcards: flashcards, });
   }
 
+  // Removes the flashcard from the array
+  removeFlashcard = (id) => {
+    const flashcards = this.state.flashcards.filter( flashcard => {
+      if (flashcard.id !== id)
+        return flashcard
+    });
+    this.setState({ flashcards, });
+  }
+
   // Toggle the Add New Item Form
   toggleForm = () => this.setState({ showForm: !this.state.showForm, });
 
-  // 
+  // Toggle the Description of the item. 
+  // Similar function to the edit 
   toggleDescription = (id) => {
     const flashcards = this.state.flashcards.map( (flashcard) => {
-      console.log(flashcard)
       if (flashcard.id === id)
         flashcard.showDescription = !flashcard.showDescription
       return flashcard 
@@ -50,16 +62,25 @@ class App extends Component {
   render() {
     return (
       <Container  style={ { paddingTop: "25px", } }>
-        <Header textAlign='center' as='h2' >React Contact List</Header>
-        <br />
+
+        <Header textAlign='center' as='h1' >React flashcard List</Header>
         <div>
           <Button icon color="blue" onClick={this.toggleForm}>
             <Icon name={`angle double ${this.state.showForm ? "up" : "down"}`} />
           </Button>
-          { this.state.showForm ? <FlashcardForm addFlashcard={this.addFlashcard} /> : null }
+          {/* Shows the add-new-flashcard form if enabled */}
+          { this.state.showForm ? <FlashcardForm addFlashcard={this.addFlashcard} /> : null } 
         </div>
+
         <Divider clearing />
-        <Flashcards flashcardList={this.state.flashcards} edit={this.editFlashcard} toggleDescription={this.toggleDescription}/>
+
+        <Flashcards 
+          flashcardList={this.state.flashcards} 
+          edit={this.editFlashcard} 
+          toggleDescription={this.toggleDescription} 
+          remove={this.removeFlashcard}
+          />
+
       </Container>
     );
   }
