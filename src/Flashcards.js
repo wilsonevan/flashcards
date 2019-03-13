@@ -4,7 +4,7 @@ import {Card, } from "semantic-ui-react";
 
 // The purpose of this function is to map through all of the flashcards, 
 // and then display them using the FlashcardDisplay function.
-const Flashcards = ({ flashcardList, edit, toggleDescription, remove, }, ) => (
+const Flashcards = ({ flashcardList, edit, toggleDescription, remove, setMiss, setCorrect, option, }, ) => (
   <Card.Group>
     { 
       flashcardList.map( ( flashcard, index, ) => (
@@ -14,6 +14,8 @@ const Flashcards = ({ flashcardList, edit, toggleDescription, remove, }, ) => (
           edit={edit} 
           toggleDescription={toggleDescription}
           remove={remove}
+          setMiss={setMiss}
+          setCorrect={setCorrect}
           />
       ))
     }

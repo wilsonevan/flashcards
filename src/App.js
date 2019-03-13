@@ -1,16 +1,18 @@
 import React, { Component } from 'react';
 import Flashcards from "./Flashcards"
 import FlashcardForm from "./FlashcardForm"
-import {Container, Header, Divider, Button, Icon} from "semantic-ui-react";
+import {Container, Header, Divider, Button, Icon, Grid, Segment, Rail, } from "semantic-ui-react";
 
 class App extends Component {
   state = { 
     flashcards: [
-      { id: 1, title: "Math", description: "The science of numbers and their operations", showDescription: false, },
-      { id: 2, title: "Science", description: "Knowledge about or study of the natural world based on facts learned through experiments and observation", showDescription: false, },
-      { id: 3, title: "Art", description: "Something that is created with imagination and skill and that is beautiful or that expresses important ideas or feelings",showDescription: false, },
+      { id: 1, title: "Math", description: "The science of numbers and their operations", showDescription: false, options: true, },
+      { id: 2, title: "Science", description: "Knowledge about or study of the natural world based on facts learned through experiments and observation", showDescription: false, options: true, },
+      { id: 3, title: "Art", description: "Something that is created with imagination and skill and that is beautiful or that expresses important ideas or feelings",showDescription: false, options: true, },
     ],
     showForm: false,
+    missed: [],
+    correct: [],
   };
 
   // Generates a relatively random ID with low probability of duplicates for small database
@@ -59,28 +61,141 @@ class App extends Component {
     this.setState({ flashcards: flashcards, });
   }
 
+  setMiss = (id) => {
+    let missedFlashcard = null;
+    let duplicateCard = false;
+
+    // Update flashcard with missed details, and store into array of missed cards
+    this.state.flashcards.map( (flashcard) => {
+      if (flashcard.id === id ) {
+        missedFlashcard = flashcard
+        missedFlashcard.options = false;
+        missedFlashcard.correct = false;
+      }
+    });
+
+    // Check for duplicate
+    this.state.missed.map( (flashcard) => {
+      if (flashcard.id === missedFlashcard.id)
+        duplicateCard = true;
+    });
+    
+    // Remove from Correct array
+    const correctFlashcards = this.state.correct.filter( (flashcard) => {
+      if (flashcard.id !== id) {
+        return flashcard
+      }
+    });
+
+    // Finally, update everything
+    if (duplicateCard == false) {
+      this.setState( { 
+        missed: [...this.state.missed, missedFlashcard ],
+        correct: correctFlashcards, 
+      })
+    } 
+  }
+
+  setCorrect = (id) => {
+    let correctFlashcard = null;
+    let duplicateCard = false;
+
+    // Update flashcard with correct details, and store into array of correct cards
+    this.state.flashcards.map( (flashcard) => {
+      if (flashcard.id === id) {
+        correctFlashcard = flashcard
+        correctFlashcard.options = false;
+        correctFlashcard.correct = true;
+      }
+    });
+
+    // Check for duplicate
+    this.state.correct.map( (flashcard) => {
+      if (flashcard.id === correctFlashcard.id)
+        duplicateCard = true;
+    });
+
+    // Remove from Missed array
+    const missedFlashcards = this.state.missed.filter( (flashcard) => {
+      if (flashcard.id !== id) {
+        return flashcard
+      }
+    });
+
+    // Finally, update everything
+    if (duplicateCard == false) {
+      this.setState( { 
+        correct: [...this.state.correct, correctFlashcard ], 
+        missed: missedFlashcards, 
+      })
+    };
+  }
+
   render() {
     return (
+      
       <Container  style={ { paddingTop: "25px", } }>
 
         <Header textAlign='center' as='h1' >React flashcard List</Header>
-        <div>
-          <Button icon color="blue" onClick={this.toggleForm}>
-            <Icon name={`angle double ${this.state.showForm ? "up" : "down"}`} />
-          </Button>
-          {/* Shows the add-new-flashcard form if enabled */}
-          { this.state.showForm ? <FlashcardForm addFlashcard={this.addFlashcard} /> : null } 
-        </div>
+        
+        <Grid centered columns={2}>
+          <Grid.Column>
+            <Segment>
 
-        <Divider clearing />
+              <div>
+                <Button icon color="blue" onClick={this.toggleForm} labelPosition='right'>
+                  <Icon name={`angle double ${this.state.showForm ? "up" : "down"}`} />
+                  Add New
+                </Button>
+                {/* Shows the add-new-flashcard form if enabled */}
+                <br />
+                <br />
+                { this.state.showForm ? <FlashcardForm addFlashcard={this.addFlashcard} /> : null } 
+              </div>
 
-        <Flashcards 
-          flashcardList={this.state.flashcards} 
-          edit={this.editFlashcard} 
-          toggleDescription={this.toggleDescription} 
-          remove={this.removeFlashcard}
-          />
+              <Divider clearing />
 
+              <Flashcards 
+                flashcardList={this.state.flashcards} 
+                edit={this.editFlashcard} 
+                toggleDescription={this.toggleDescription} 
+                remove={this.removeFlashcard}
+                setMiss={this.setMiss}
+                setCorrect={this.setCorrect}
+                />
+                
+              <Rail attached position='left'>
+                <Segment>
+                  <Header textAlign='center' as='h3' >Missed Flashcards</Header>
+                  <Flashcards 
+                    flashcardList={this.state.missed}
+                    // edit={this.editFlashcard} 
+                    toggleDescription={this.toggleDescription} 
+                    // remove={this.removeFlashcard}
+                    setMiss={this.setMiss}
+                    setCorrect={this.setCorrect}
+                  />
+                </Segment>
+              </Rail>  
+
+              <Rail attached position='right'>
+                <Segment>
+                  <Header textAlign='center' as='h3' >Correct Flashcards</Header>
+                  <Flashcards 
+                    flashcardList={this.state.correct} 
+                    // edit={this.editFlashcard} 
+                    toggleDescription={this.toggleDescription} 
+                    // remove={this.removeFlashcard}
+                    setMiss={this.setMiss}
+                    setCorrect={this.setCorrect}
+                  />
+                </Segment>
+              </Rail>
+
+            </Segment>
+          </Grid.Column>
+        </Grid>
+        
       </Container>
     );
   }
