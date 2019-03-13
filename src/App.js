@@ -61,6 +61,9 @@ class App extends Component {
     this.setState({ flashcards: flashcards, });
   }
 
+  // Sets the flashcard into the misses column
+  // Also prevents duplicates,
+  // Removes from correct column if already there
   setMiss = (id) => {
     let missedFlashcard = null;
     let duplicateCard = false;
@@ -96,6 +99,9 @@ class App extends Component {
     } 
   }
 
+  // Sets the flashcard into the correct column
+  // Also prevents duplicates,
+  // Removes from misses column if already there
   setCorrect = (id) => {
     let correctFlashcard = null;
     let duplicateCard = false;
@@ -133,11 +139,8 @@ class App extends Component {
 
   render() {
     return (
-      
       <Container  style={ { paddingTop: "25px", } }>
-
         <Header textAlign='center' as='h1' >React flashcard List</Header>
-        
         <Grid centered columns={2}>
           <Grid.Column>
             <Segment>
@@ -195,7 +198,6 @@ class App extends Component {
             </Segment>
           </Grid.Column>
         </Grid>
-        
       </Container>
     );
   }

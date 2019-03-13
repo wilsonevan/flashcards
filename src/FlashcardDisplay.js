@@ -31,7 +31,7 @@ const FlashcardDisplay = ( { id, title, description, showDescription, options, e
             </Modal>
             <Button basic color='red' icon='trash alternate outline' onClick={() => remove(id)}></Button>
           </Button.Group>
-      }
+        }
       <Card.Header  style={ { paddingTop: "10px", paddingLeft: "10px"} }>{ title }</Card.Header>
     </Card.Content> 
 
@@ -39,7 +39,6 @@ const FlashcardDisplay = ( { id, title, description, showDescription, options, e
     {showDescription ? <Card.Content description={ description } /> : null }
 
     {/* OPTIONS: Allows the user to edit or delete the flashcard */}
-    
     <Card.Content textAlign="center" extra>
       <Button.Group >
         <Button onClick={() => setMiss(id)}>Missed</Button>
